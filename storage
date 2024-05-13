@@ -1,0 +1,66 @@
+variables.tf
+variable "azurerm_storage_account_configuration" {
+  description = "[Required] Complex object for creation of storage acc and share"
+}
+ 
+ 
+variables.azure-lob-weu-azfileshare.prd.tfvars
+ 
+application_configuration = {
+  business_unit       = "ec"
+  application_name    = "azfileshare"
+  environment         = "prd"
+  subscription_id     = "de0bd2f2-6003-4429-a97a-81268023c4d1"
+  resource_group_name = "prd-azfileshare-weu-rg"
+ 
+  location = "westeurope"
+ 
+  private_dns_zone_name      = "privatelink.file.core.windows.net"
+  private_dns_blob_zone_name = "privatelink.blob.core.windows.net"
+  dns_rg                     = "prd-globaldns-weu-rg"
+ 
+  tags = {
+    "applicationname" = "azfileshare"
+    "costcenter"      = "621200"
+    "department"      = "ENIT"
+    "environment"     = "prd"
+    "technicalowner"  = "mark.strey@enercon.de"
+    "deployment-type" = "iac-enit"
+  }
+}
+ 
+recovery_vault_name     = "prd-azfileshare-weu-rg-rsv"
+default_backup_policies = ["prd-azfileshare-weu-rg-fs-daily-1200-7d-4w-policy"]
+ 
+azurerm_backup_policy_file_share_configuration = {
+  prd-azfileshare-weu-rg-fs-daily-1200-7d-4w-policy = {
+    timezone         = "W. Europe Standard Time"
+    backup_frequency = "Daily"
+    backup_time      = "12:00"
+ 
+    retention_daily = [{
+      count = 30
+    }]
+    retention_weekly = [{
+      count    = 4
+      weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    }]
+  }
+}
+ 
+ 
+azurerm_storage_account_configuration = {
+  ecprdsrvuy2weust = {
+    fileshare_administrator = ["EDV-GroupFolder-Manager"]
+    storage_share_configuration = {
+      groups = {
+        quota               = 100
+        access_tier         = "Hot"
+        adgroup_reader      = "SEC-DE-FS_UY-SRV-UY2_0012-Groups-R-w-"
+        adgroup_contributor = "SEC-DE-FS_UY-SRV-UY2_0011-Groups-W-w-"
+        adgroup_elevated    = "SEC-DE-FS_UY-SRV-UY2_0010-Groups-FC-w-"
+      }
+    }
+  }
+has context menu
+Compose
